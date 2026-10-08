@@ -1,0 +1,87 @@
+# yaml-language-server: $schema=../../schema/skill.schema.json
+name: subir-skill
+title: Subir skill a la Biblioteca
+emoji: "📚"
+author: branddydev
+version: 1.0.0
+category: productividad
+subcategory: biblioteca
+status: estable
+tags: [biblioteca, github, publicar, meta]
+
+summary: Publica cualquier skill tuya en la biblioteca. Hace una copia portable (la original no se toca), rellena la ficha, valida y la sube.
+
+description: |
+  La skill que usan nuestras IAs para alimentar la biblioteca. Basta con abrir el repo `skills-library`
+  con Claude Code y decir *"sube mi skill X"*.
+
+  - Copia la skill desde `~/.claude/skills/<slug>` (o la ruta que le digas).
+  - Lee el `SKILL.md` y deduce los **parámetros**, el **output**, los **requisitos** y los **triggers** para rellenar `skill.yaml`.
+  - Te pide un **output de ejemplo real** y te enseña la ficha antes de subirla.
+  - La hace **portable** con `limpiar-skill`: los secretos y los datos personales pasan a variables de entorno y se genera un `SETUP.md` con el paso a paso para conectar los requisitos. Tu skill original no se toca.
+  - Ejecuta el validador y hace **commit + push**. Railway redespliega la web solo.
+
+  Si la skill ya existe, la trata como una actualización: sube la versión y te añade como contributor.
+
+triggers:
+  - "/subir-skill"
+  - "sube mi skill X a la biblioteca"
+  - "publica esta skill"
+  - "actualiza mi skill en la biblioteca"
+
+inputs:
+  - name: skill
+    type: string
+    required: true
+    description: Nombre (slug) de la skill a subir. Si no lo dices, te enseña las que tienes en ~/.claude/skills y te pregunta.
+    example: humanizer-es
+  - name: ruta_origen
+    type: file
+    required: false
+    default: ~/.claude/skills/<skill>
+    description: Carpeta donde está la skill, si no está en la ruta por defecto.
+  - name: ejemplo_output
+    type: text
+    required: true
+    description: Un output real que haya generado la skill (texto, captura o archivo). Te lo pide durante el proceso.
+  - name: modo
+    type: choice
+    required: false
+    options: [push, pr]
+    default: push
+    description: Subir directo a main o abrir un pull request para revisión.
+
+output:
+  format: accion
+  description: Deja la carpeta skills/<slug>/ validada en el repo, hace commit + push (o abre un PR) y te da el enlace /s/<slug>/ de la web.
+
+example:
+  prompt: "sube mi skill humanizer-es a la biblioteca"
+  output: |
+    Copiada `~/.claude/skills/humanizer-es` → `skills/humanizer-es/`
+
+    **Ficha propuesta**
+    - **Título:** Humanizer ES ✍️ · *contenido* · estable
+    - **Summary:** Reescribe textos en español para que no suenen a IA, manteniendo el tono del autor.
+    - **Inputs:** `texto` (text, obligatorio) · `tono` (choice, opcional: cercano | profesional)
+    - **Output:** markdown, el texto reescrito con una lista de cambios
+
+    ⚠️ He quitado un ID de Notion de `references/estilo.md` y lo he cambiado por `<NOTION_PAGE_ID>`.
+
+    ¿La subo así?
+
+    > sí
+
+    ✓ `npm run validate`: 4 skills válidas
+    ✓ `skill: humanizer-es v1.0.0` subida a main
+
+    Estará en la web en 1–2 minutos: `/s/humanizer-es/`
+
+requirements:
+  tools: [git, gh CLI, Node.js 20+]
+  skills: [limpiar-skill]
+  notes: Sigue el SETUP.md para configurarla. Clona el repo en ~/skills-library si no lo tienes.
+
+platforms: [claude-code]
+created: 2026-10-08
+updated: 2026-10-08

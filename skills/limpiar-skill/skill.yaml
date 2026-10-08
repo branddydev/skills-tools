@@ -1,0 +1,74 @@
+# yaml-language-server: $schema=../../schema/skill.schema.json
+name: limpiar-skill
+title: Limpiar skill (hacerla portable)
+emoji: "🧼"
+author: branddydev
+version: 1.0.0
+category: productividad
+subcategory: biblioteca
+status: beta
+tags: [biblioteca, portabilidad, requisitos, setup, seguridad]
+
+summary: Crea una copia portable de tu skill, sin tocar la original, con la lista de requisitos y un SETUP.md para que funcione en cualquier ordenador.
+
+description: |
+  Tus skills funcionan en tu ordenador porque ahí están tus keys, tus MCPs y tus rutas. Esta skill
+  prepara una **copia** que funcione en el ordenador de otra persona:
+
+  - **No toca tu skill original.** Trabaja sobre una copia en el repo y comprueba con una huella (checksum) que la original sigue idéntica.
+  - Hace un **inventario** de todo lo que depende de tu entorno: API keys, credenciales, MCPs, CLIs, rutas, IDs de Notion, Drive o ClickUp, emails, otras skills.
+  - Pasa los secretos y los datos personales a **variables de entorno** o marcadores, y nombra los MCPs por servicio (sin los UUID de tu instalación).
+  - Añade al `SKILL.md` un bloque **"Antes de empezar"** que comprueba los requisitos y, si falta algo, guía al usuario.
+  - Genera un **`SETUP.md`** con la lista de requisitos y el paso a paso para conectar cada uno: dónde se saca la key, cómo se conecta el MCP, qué se instala.
+  - Al final, si quieres, la sube con `subir-skill`.
+
+triggers:
+  - "/limpiar-skill"
+  - "limpia mi skill X"
+  - "haz portable esta skill"
+  - "prepara esta skill para compartirla"
+
+inputs:
+  - name: skill
+    type: string
+    required: true
+    description: Nombre (slug) de la skill a limpiar.
+    example: informe-clientes
+  - name: ruta_origen
+    type: file
+    required: false
+    default: ~/.claude/skills/<skill>
+    description: Carpeta de la skill original, si no está en la ruta por defecto. Nunca se modifica.
+
+output:
+  format: file
+  description: Una copia portable en ~/skills-library/skills/<skill>/ con SETUP.md, requisitos en skill.yaml y un bloque de comprobación en el SKILL.md. Además, en el chat, la tabla de requisitos y los cambios hechos.
+
+example:
+  prompt: "limpia mi skill informe-clientes para que la puedan usar los demás"
+  output: |
+    Huella de `~/.claude/skills/informe-clientes` tomada ✓
+
+    **Requisitos detectados**
+
+    | Dependencia | Tipo | Qué he hecho |
+    |---|---|---|
+    | Key de APImart escrita en `scripts/render.py:12` | Secreto | → `APIMART_API_KEY` |
+    | `mcp__febc6f42-…__notion-search` | MCP | → "MCP de Notion (`notion-search`, `notion-fetch`)" |
+    | ID de la DB "Clientes" | ID personal | → `INFORME_CLIENTES_NOTION_DB_ID` |
+    | `/Users/ana/Drive/Clientes` | Ruta personal | → `INFORME_CLIENTES_DRIVE_FOLDER_ID` |
+    | `rclone` | CLI | En el SETUP: `brew install rclone` + `rclone config` |
+
+    He creado `SETUP.md` con los 5 pasos y he añadido "Antes de empezar" al SKILL.md.
+    Huella de la original: **idéntica** ✓ (tu skill no se ha tocado)
+
+    ¿La subo a la biblioteca?
+
+requirements:
+  tools: [git, gh CLI, Node.js 20+]
+  skills: [subir-skill]
+  notes: Sigue el SETUP.md para configurarla.
+
+platforms: [claude-code]
+created: 2026-10-08
+updated: 2026-10-08
