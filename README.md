@@ -1,6 +1,6 @@
 # Skills Tools · La Biblioteca de Skills
 
-Las dos skills con las que se alimenta la **Biblioteca de Skills**. Están en un repo público para que cualquiera pueda instalarlas sin permisos.
+Las dos skills con las que se alimenta la **[Biblioteca de Skills](https://web-production-0297b.up.railway.app)**. Están en un repo público para que cualquiera pueda instalarlas sin permisos.
 
 - **`limpiar-skill`**: crea una copia portable de tu skill, sin tocar la original. Pasa las keys, los MCPs, las rutas y los IDs personales a variables de entorno y genera un `SETUP.md` con la lista de requisitos y el paso a paso para conectarlos.
 - **`subir-skill`**: rellena la ficha de la skill, la valida y la sube a la biblioteca.
